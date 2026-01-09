@@ -3,6 +3,7 @@ name: Node.js CI
 on: [push]
 
 jobs:
+  # --- JOB 1 : INSTALL ---
   install:
     runs-on: ubuntu-latest
     steps:
@@ -14,4 +15,30 @@ jobs:
           cache-dependency-path: package-lock.json
       - run: npm ci
 
-      
+  # --- JOB 2 : LINT (Validate) ---
+  validate:
+    needs: install
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 'latest'
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
+      - run: npm ci
+      - run: npm run lint
+
+  # --- JOB 3 : UNIT TEST ---
+  unit-test:
+    needs: install
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 'latest'
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
+      - run: npm ci
+      - run: npm test
