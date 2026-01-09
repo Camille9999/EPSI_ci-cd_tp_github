@@ -7,6 +7,13 @@ on:
     tags-ignore:
       - '**'
   pull_request:
+  workflow_dispatch:
+      inputs:
+        ENV_TARGET:
+          description: 'Environment Target'
+          required: false
+          default: 'production'
+          type: string
 
 jobs:
   # --- JOB 1 : INSTALL ---
@@ -49,7 +56,7 @@ jobs:
       - run: npm ci
       - run: npm test
 
-# --- JOB 4 : E2E TEST (Uniquement sur PR) ---
+  # --- JOB 4 : E2E TEST (Uniquement sur PR) ---
   e2e-test:
     needs: install
     runs-on: ubuntu-latest
@@ -57,6 +64,14 @@ jobs:
 
     steps:
       - run: echo "Hello E2E !"
+
+  # --- JOB : ONLY CANARY ---
+  only-canary:
+    needs: install
+    runs-on: ubuntu-latest
+    if: github.event.inputs.ENV_TARGET == 'canary'
+    steps:
+      - run: echo "Hello Only Canary !"
 
 
   release:
