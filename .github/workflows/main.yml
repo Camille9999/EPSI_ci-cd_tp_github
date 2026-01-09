@@ -45,11 +45,13 @@ jobs:
 
   # --- JOB 4 : RELEASE ---
   release:
-    needs: [validate, unit-test]
+    needs: [unit-test]
     runs-on: ubuntu-latest
     if: |
       github.ref == 'refs/heads/main' &&
       !startsWith(github.event.head_commit.message, 'chore: release')
+    environment:
+      name: production
     permissions:
       contents: write
     steps:
