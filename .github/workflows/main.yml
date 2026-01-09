@@ -42,3 +42,31 @@ jobs:
           cache-dependency-path: package-lock.json
       - run: npm ci
       - run: npm test
+
+  # --- JOB 4 : RELEASE ---
+  release:
+    needs: [validate, unit-test]
+    runs-on: ubuntu-latest
+    if: |
+      github.ref == 'refs/heads/main' &&
+      !startsWith(github.event.head_commit.message, 'chore: release')
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 'latest'
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
+      - run: npm ci
+      - name: Git Configuration
+        run: |
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config user.name "GitHub Actions"
+      - run: npx --yes release-it --ci
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

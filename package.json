@@ -25,7 +25,7 @@
     "eslint": "^9.39.2",
     "globals": "^16.5.0",
     "husky": "^9.1.7",
-    "release-it": "^19.0.5",
+    "release-it": "^19.2.3",
     "vite": "^5.0.8",
     "vitest": "^3.2.4",
     "zod": "^3.22.4"
@@ -36,11 +36,8 @@
   },
   "release-it": {
     "$schema": "https://unpkg.com/release-it/schema/release-it.json",
-    "gitlab": {
+    "github": {
       "release": true
-    },
-    "git": {
-      "commitMessage": "chore: release v${version}"
     }
   }
 }
