@@ -1,4 +1,4 @@
-name: Node.js CI
+name: Manual Release
 
 on:
   workflow_dispatch:
@@ -11,13 +11,15 @@ on:
 
 jobs:
   release:
-    needs: []
     runs-on: ubuntu-latest
+
     if: |
       github.ref == 'refs/heads/main' &&
       !startsWith(github.event.head_commit.message, 'chore: release')
+
     environment:
       name: production
+
     permissions:
       contents: write
     steps:
