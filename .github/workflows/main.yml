@@ -56,12 +56,21 @@ jobs:
       - run: npm ci
       - run: npm test
 
-  # --- JOB 4 : E2E TEST (Uniquement sur PR) ---
+  # --- JOB : INTEGRATION TEST ---
+  integration-test:
+    needs: unit-test
+    runs-on: ubuntu-latest
+    if: |
+      github.ref_type == 'branch' &&
+      !startsWith(github.event.head_commit.message, 'chore: release')
+    steps:
+      - run: echo "Hello Integration !"
+
+  # --- JOB : E2E TEST ---
   e2e-test:
-    needs: install
+    needs: integration-test
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request'
-
     steps:
       - run: echo "Hello E2E !"
 
