@@ -1,0 +1,16 @@
+name: 'Setup Node Project'
+description: 'Checkout code, setup Node and install dependencies'
+
+runs:
+  using: "composite"
+  steps:
+    - uses: actions/checkout@v4
+
+    - uses: actions/setup-node@v4
+      with:
+        node-version: 'latest'
+        cache: 'npm'
+        cache-dependency-path: package-lock.json
+
+    - run: npm ci
+      shell: bash

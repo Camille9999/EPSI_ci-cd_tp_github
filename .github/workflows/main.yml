@@ -2,44 +2,30 @@ name: Node.js CI
 
 on:
   push:
-    branches:
-      - '**'
-    tags-ignore:
-      - '**'
+    branches: ['**']
+    tags-ignore: ['**']
   pull_request:
   workflow_dispatch:
-      inputs:
-        ENV_TARGET:
-          description: 'Environment Target'
-          required: false
-          default: 'production'
-          type: string
+    inputs:
+      ENV_TARGET:
+        description: 'Environment Target'
+        required: false
+        default: 'production'
+        type: string
 
 jobs:
   # --- JOB 1 : INSTALL ---
   install:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 'latest'
-          cache: 'npm'
-          cache-dependency-path: package-lock.json
-      - run: npm ci
+      - uses: ./.github/actions/setup-project
 
   # --- JOB 2 : LINT (Validate) ---
   validate:
     needs: install
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 'latest'
-          cache: 'npm'
-          cache-dependency-path: package-lock.json
-      - run: npm ci
+      - uses: ./.github/actions/setup-project
       - run: npm run lint
 
   # --- JOB 3 : UNIT TEST ---
@@ -47,13 +33,7 @@ jobs:
     needs: install
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 'latest'
-          cache: 'npm'
-          cache-dependency-path: package-lock.json
-      - run: npm ci
+      - uses: ./.github/actions/setup-project
       - run: npm test
 
   # --- JOB : INTEGRATION TEST ---
@@ -80,8 +60,8 @@ jobs:
     runs-on: ubuntu-latest
     if: vars.ENV_TARGET == 'canary'
     steps:
+      - uses: ./.github/actions/setup-project
       - run: echo "Hello Only Canary !"
-
 
   release:
     needs: [validate, unit-test]
@@ -104,6 +84,7 @@ jobs:
           cache: 'npm'
           cache-dependency-path: package-lock.json
       - run: npm ci
+
       - name: Git Configuration
         run: |
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
