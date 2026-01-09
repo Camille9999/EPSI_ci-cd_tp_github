@@ -69,13 +69,13 @@ jobs:
   only-canary:
     needs: install
     runs-on: ubuntu-latest
-    if: github.event.inputs.ENV_TARGET == 'canary'
+    if: vars.ENV_TARGET == 'canary'
     steps:
       - run: echo "Hello Only Canary !"
 
 
   release:
-    needs: [unit-test]
+    needs: [validate, unit-test]
     runs-on: ubuntu-latest
     if: |
       github.ref == 'refs/heads/main' &&
